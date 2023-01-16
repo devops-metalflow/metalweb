@@ -26,7 +26,7 @@ jobs:
           yarn
         continue-on-error: false
       - name: Run lint
-        run: yarn run lint
+        run: yarn run lint:eslint
         continue-on-error: false
   test:
     name: Test
@@ -46,7 +46,7 @@ jobs:
           yarn
         continue-on-error: false
       - name: Run coverage
-        run: yarn run coverage
+        run: yarn run test:unit-coverage
         continue-on-error: false
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash)

@@ -1,45 +1,58 @@
 # metalweb
 
 [![Build Status](https://github.com/devops-metalflow/metalweb/workflows/ci/badge.svg?branch=main&event=push)](https://github.com/devops-metalflow/metalweb/actions?query=workflow%3Aci)
-[![codecov](https://codecov.io/gh/devops-metalflow/metalweb/branch/main/graph/badge.svg?token=FS77A6KD37)](https://codecov.io/gh/devops-metalflow/metalweb)
 [![License](https://img.shields.io/github/license/devops-metalflow/metalweb.svg)](https://github.com/devops-metalflow/metalweb/blob/main/LICENSE)
 [![Tag](https://img.shields.io/github/tag/devops-metalflow/metalweb.svg)](https://github.com/devops-metalflow/metalweb/tags)
 
 
 
+> English | [中文](README_zh.md)
+
+
+
 ## Introduction
 
-*metalweb* is the web of [metalflow](https://github.com/devops-metalflow) written in Vue.
+*metalweb* is the web of [metalflow](https://github.com/devops-metalflow) written in TypeScript.
+
+If you want to give it a try, you can install it for free (see section below) or you can just use the online demo hosted on Vercel.
+
+Demo hosted on Vercel: [demo-metalflow.vercel.app](https://demo-metalflow.vercel.app/)
+
+Demo credentials: admin/123456
 
 
 
 ## Prerequisites
 
+- Node.js >= 14.0
 - Vue >= 3.0
 
 
 
 ## Run
 
+### Mock mode
+
+Set `VITE_USE_MOCK=true` and `VITE_GLOB_API_URL=/basic-api` in [env.development](https://github.com/devops-metalflow/metalweb/blob/main/env.development).
+
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run build
-yarn run dev
+yarn && yarn run serve
 ```
 
 
 
-## Docker
+## Deploy mode
+
+Set `VITE_USE_MOCK=false` and 'VITE_GLOB_API_URL=http://localhost:8089/api/v1' in [env.development](https://github.com/devops-metalflow/metalweb/blob/main/env.development).
 
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run build
-docker build --no-cache -f Dockerfile -t ghcr.io/devops-metalflow/metalweb:latest .
-docker run ghcr.io/devops-metalflow/metalweb:latest
+yarn && yarn run build-prod
 ```
 
 
