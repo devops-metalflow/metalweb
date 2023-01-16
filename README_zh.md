@@ -14,7 +14,7 @@
 
 *metalweb* 作为 [metalflow](https://github.com/devops-metalflow) 前端，用于提供 web 访问服务。
 
-Demo URL: [demo-metalflow.vercel.app](https://demo-metalflow.vercel.app/)
+Demo URL: [metalflow.fly.dev](https://metalflow.fly.dev)
 
 Demo User/Pass: admin/123456
 
