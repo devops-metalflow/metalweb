@@ -31,7 +31,7 @@ Demo User/Pass: admin/123456
 
 ### Mock 模式
 
-需在 [env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development) 中设置 `VITE_USE_MOCK=true` 和 `VITE_GLOB_API_URL=/basic-api`。
+需在 [.env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development) 中设置 `VITE_USE_MOCK=true` 和 `VITE_GLOB_API_URL=/basic-api`。
 
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git
@@ -44,7 +44,7 @@ yarn && yarn run serve
 
 ## Deploy 模式
 
-需在 [env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development) 中设置 `VITE_USE_MOCK=false` 和 `VITE_GLOB_API_URL=http://localhost:8089/api/v1`。
+需在 [.env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development) 中设置 `VITE_USE_MOCK=false` 和 `VITE_GLOB_API_URL=http://localhost:8089/api/v1`。
 
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git

@@ -33,7 +33,7 @@ Demo credentials: admin/123456
 
 ### Mock mode
 
-Set `VITE_USE_MOCK=true` and `VITE_GLOB_API_URL=/basic-api` in [env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development).
+Set `VITE_USE_MOCK=true` and `VITE_GLOB_API_URL=/basic-api` in [.env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development).
 
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git
@@ -46,7 +46,7 @@ yarn && yarn run serve
 
 ## Deploy mode
 
-Set `VITE_USE_MOCK=false` and `VITE_GLOB_API_URL=http://localhost:8089/api/v1` in [env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development).
+Set `VITE_USE_MOCK=false` and `VITE_GLOB_API_URL=http://localhost:8089/api/v1` in [.env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development).
 
 ```bash
 git clone https://github.com/devops-metalflow/metalweb.git
