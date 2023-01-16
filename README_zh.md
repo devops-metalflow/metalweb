@@ -37,7 +37,8 @@ Demo User/Pass: admin/123456
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run serve
+yarn install
+yarn run serve
 ```
 
 
@@ -50,20 +51,8 @@ yarn && yarn run serve
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run build-prod
-```
-
-
-
-## 容器
-
-```bash
-git clone https://github.com/devops-metalflow/metalweb.git
-
-cd metalweb
-yarn && yarn run build-prod
-docker build --no-cache -f Dockerfile -t ghcr.io/devops-metalflow/metalweb:latest .
-docker run ghcr.io/devops-metalflow/metalweb:latest
+yarn install
+yarn run build-prod
 ```
 
 

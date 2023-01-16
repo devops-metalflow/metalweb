@@ -39,7 +39,8 @@ Set `VITE_USE_MOCK=true` and `VITE_GLOB_API_URL=/basic-api` in [.env.development
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run serve
+yarn install
+yarn run serve
 ```
 
 
@@ -52,7 +53,8 @@ Set `VITE_USE_MOCK=false` and `VITE_GLOB_API_URL=http://localhost:8089/api/v1` i
 git clone https://github.com/devops-metalflow/metalweb.git
 
 cd metalweb
-yarn && yarn run build-prod
+yarn install
+yarn run build-prod
 ```
 
 
