@@ -8,8 +8,8 @@
   },
   "scripts": {
     "bootstrap": "yarn install",
-    "serve": "npm run dev",
     "dev": "vite",
+    "serve": "npm run dev",
     "build-prod": "cross-env NODE_ENV=production vite build && esno ./build/script/postBuild.ts",
     "build-test": "cross-env vite build --mode test && esno ./build/script/postBuild.ts",
     "build-prod:no-cache": "yarn clean:cache && npm run build-prod",
