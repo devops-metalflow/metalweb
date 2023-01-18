@@ -59,8 +59,4 @@ yarn run build-prod
 
 ## 协议
 
-本项目协议声明见 [here](LICENSE).
-
-
-
-## 引用
+本项目协议声明见 [here](LICENSE)。
