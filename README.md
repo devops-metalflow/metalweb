@@ -16,7 +16,7 @@
 
 If you want to give it a try, you can install it for free (see section below) or you can just use the online demo hosted on Vercel.
 
-Demo hosted: [metalflow.fly.dev](https://metalflow.fly.dev)
+Demo hosted: [metalweb.vercel.app](https://metalweb.vercel.app/)
 
 Demo credentials: admin/123456
 
