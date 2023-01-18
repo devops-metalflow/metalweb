@@ -62,7 +62,3 @@ yarn run build-prod
 ## License
 
 Project License can be found [here](LICENSE).
-
-
-
-## Reference
