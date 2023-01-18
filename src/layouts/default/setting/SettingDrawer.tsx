@@ -100,7 +100,7 @@ export default defineComponent({
         <>
           <TypePicker
             menuTypeList={menuTypeList}
-            handler={(item: typeof menuTypeList[0]) => {
+            handler={(item: (typeof menuTypeList)[0]) => {
               baseHandler(HandlerEnum.CHANGE_LAYOUT, {
                 mode: item.mode,
                 type: item.type,
@@ -146,7 +146,7 @@ export default defineComponent({
     /**
      * @description:
      */
-    function renderFeatures() {
+    function _renderFeatures() {
       let triggerDef = unref(getTrigger);
 
       const triggerOptions = getMenuTriggerOptions(unref(getSplit));
@@ -278,7 +278,7 @@ export default defineComponent({
       );
     }
 
-    function renderContent() {
+    function _renderContent() {
       return (
         <>
           <SwitchItem
@@ -365,7 +365,7 @@ export default defineComponent({
       );
     }
 
-    function renderTransition() {
+    function _renderTransition() {
       return (
         <>
           <SwitchItem
@@ -414,9 +414,9 @@ export default defineComponent({
         <Divider>{() => t('layout.setting.sidebarTheme')}</Divider>
         {renderSiderTheme()}
         {/* <Divider>{() => t('layout.setting.interfaceFunction')}</Divider>
-        {renderFeatures()}
+        {_renderFeatures()}
         <Divider>{() => t('layout.setting.interfaceDisplay')}</Divider>
-        {renderContent()}
+        {_renderContent()}
         <Divider>{() => t('layout.setting.animation')}</Divider>
         {renderTransition()} */}
         <Divider />

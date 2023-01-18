@@ -12,7 +12,8 @@ import {
   PROJ_CFG_KEY,
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
-  MULTIPLE_TABS_KEY, IDEMPOTENCE_TOKEN_NAME,
+  MULTIPLE_TABS_KEY,
+  IDEMPOTENCE_TOKEN_NAME,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { toRaw } from 'vue';
