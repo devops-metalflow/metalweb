@@ -45,7 +45,7 @@ yarn run serve
 
 
 
-## Deploy mode
+### Deploy mode
 
 Set `VITE_USE_MOCK=false` and `VITE_GLOB_API_URL=http://localhost:8089/api/v1` in [.env.development](https://github.com/devops-metalflow/metalweb/blob/main/.env.development).
 
