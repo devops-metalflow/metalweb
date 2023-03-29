@@ -23,12 +23,12 @@ export const columns: BasicColumn[] = [
     dataIndex: 'keyword',
   },
   {
-    title: '开机配置',
-    dataIndex: 'startTime',
-  },
-  {
     title: '关机配置',
     dataIndex: 'shutTime',
+  },
+  {
+    title: '开机配置',
+    dataIndex: 'startTime',
   },
   {
     title: '任务状态',
@@ -65,14 +65,57 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'startTime',
-    label: '开机时间',
+    field: 'repeatSelect',
+    label: '重复选择',
     required: true,
-    component: 'TimePicker',
+    component: 'RadioGroup',
+    defaultValue: 1,
+    componentProps: {
+      options: [
+        { label: '按周', value: 1 },
+        { label: '按日期', value: 0 },
+      ],
+    },
+  },
+  {
+    field: 'repeat',
+    label: '重复',
+    required: true,
+    ifShow: ({ values }) => {
+      return !!values.repeatSelect;
+    },
+    component: 'CheckboxGroup',
+    componentProps: {
+      options: [
+        { label: '周日', value: 0 },
+        { label: '周一', value: 1 },
+        { label: '周二', value: 2 },
+        { label: '周三', value: 3 },
+        { label: '周四', value: 4 },
+        { label: '周五', value: 5 },
+        { label: '周六', value: 6 },
+      ],
+    },
+  },
+  {
+    field: 'handleDate',
+    label: '关开机日期',
+    required: true,
+    component: 'Input',
+    slot: 'customSlot',
+    ifShow: ({ values }) => {
+      return !values.repeatSelect;
+    },
   },
   {
     field: 'shutTime',
     label: '关机时间',
+    required: true,
+    component: 'TimePicker',
+  },
+  {
+    field: 'startTime',
+    label: '开机时间',
     required: true,
     component: 'TimePicker',
   },
@@ -117,23 +160,6 @@ export const formSchema: FormSchema[] = [
       options: [
         { label: '启用', value: 1 },
         { label: '禁用', value: 0 },
-      ],
-    },
-  },
-  {
-    field: 'repeat',
-    label: '重复',
-    required: true,
-    component: 'CheckboxGroup',
-    componentProps: {
-      options: [
-        { label: '周日', value: 0 },
-        { label: '周一', value: 1 },
-        { label: '周二', value: 2 },
-        { label: '周三', value: 3 },
-        { label: '周四', value: 4 },
-        { label: '周五', value: 5 },
-        { label: '周六', value: 6 },
       ],
     },
   },

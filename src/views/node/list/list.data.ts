@@ -143,10 +143,27 @@ export const searchFormSchema: FormSchema[] = [
 
 export const AddFormSchema: FormSchema[] = [
   {
-    field: 'Address',
+    field: 'address',
     label: '地址',
     component: 'Input',
     required: true,
+    rules: [
+      {
+        required: true,
+        message: '请输入地址',
+      },
+      {
+        validator(_, value) {
+          return new Promise((resolve, reject) => {
+            if (isValidIP(value)) {
+              resolve();
+            } else {
+              reject('ip地址不正确');
+            }
+          });
+        },
+      },
+    ],
   },
   {
     field: 'sshPort',
@@ -154,6 +171,43 @@ export const AddFormSchema: FormSchema[] = [
     component: 'InputNumber',
     required: true,
     defaultValue: 22,
+    rules: [
+      {
+        required: true,
+        message: '请输入端口号',
+      },
+      {
+        validator(_, value) {
+          return new Promise((resolve, reject) => {
+            if (value <= 0) {
+              reject('端口不正确');
+            } else {
+              resolve();
+            }
+          });
+        },
+      },
+    ],
+  },
+  {
+    field: 'os',
+    label: '所属系统',
+    component: 'Select',
+    required: true,
+    componentProps: {
+      options: [
+        {
+          value: 'windows',
+          label: 'Windows系统',
+          type: '',
+        },
+        {
+          value: 'linux',
+          label: 'Linux系统',
+          type: 'success',
+        },
+      ],
+    },
   },
   // {
   //   field: 'asset',
@@ -209,3 +263,9 @@ export const UploadFormSchema: FormSchema[] = [
     },
   },
 ];
+
+function isValidIP(ip) {
+  const reg =
+    /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+  return reg.test(ip);
+}

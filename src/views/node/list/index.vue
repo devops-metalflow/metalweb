@@ -206,6 +206,7 @@
   import UploaderDrawer from './components/UploaderDrawer.vue';
   import { addCollect } from '/@/api/collect/collect';
   import { useRouter } from 'vue-router';
+  import { DOC_URL } from '/@/settings/siteSetting';
 
   export default defineComponent({
     name: 'NodeList',
@@ -368,7 +369,20 @@
         openAddModal(true);
       }
 
-      function handleAddSuccess() {
+      function handleAddSuccess({ address }) {
+        // 提醒用户去下载部署agent：metalbeat
+        const pContent = `还需要为${address}部署MetalBeat，否则无法体验完整的服务器管理功能。`;
+        Modal.confirm({
+          title: '还差一步',
+          icon: createVNode(ExclamationCircleOutlined),
+          content: h('div', {}, [h('p', pContent), h('p', '请前往部署指南站点进行部署。')]),
+          okText: '立即前往',
+          onOk() {
+            window.open(DOC_URL, '_blank');
+          },
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onCancel() {},
+        });
         reload();
         const idempotenceInfo = useIdempotenceStore();
         idempotenceInfo.RefreshIdempotenceToken();

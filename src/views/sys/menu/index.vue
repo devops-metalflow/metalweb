@@ -58,6 +58,7 @@
         bordered: true,
         showIndexColumn: false,
         canResize: false,
+        showSummary: true,
         actionColumn: {
           width: 80,
           title: '操作',

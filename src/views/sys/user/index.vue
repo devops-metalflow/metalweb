@@ -62,10 +62,7 @@
         },
         showTableSetting: true,
         bordered: true,
-        handleSearchInfoFn(info) {
-          console.log('searchINfo', info);
-          return info;
-        },
+        showSummary: true,
         actionColumn: {
           width: 250,
           title: '操作',

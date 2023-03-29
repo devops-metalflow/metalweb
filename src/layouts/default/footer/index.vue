@@ -7,7 +7,7 @@
 
       <a @click="openWindow(DOC_URL)">{{ t('layout.footer.onlineDocument') }}</a>
     </div>
-    <div>Copyright &copy;2023 技术部</div>
+    <div>Copyright &copy;{{ yearNow }} Devops-Metalflow</div>
   </Footer>
 </template>
 
@@ -38,6 +38,8 @@
       const footerRef = ref<ComponentRef>(null);
       const { setFooterHeight } = useLayoutHeight();
 
+      const yearNow = new Date().getFullYear();
+
       const getShowLayoutFooter = computed(() => {
         if (unref(getShowFooter)) {
           const footerEl = unref(footerRef)?.$el;
@@ -52,6 +54,7 @@
         getShowLayoutFooter,
         prefixCls,
         t,
+        yearNow,
         DOC_URL,
         GITHUB_URL,
         SITE_URL,

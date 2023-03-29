@@ -41,7 +41,7 @@
           });
           closeModal();
           setModalProps({ confirmLoading: false });
-          emit('success');
+          emit('success', { address: values.address });
         } catch (e) {
           closeModal();
           setModalProps({ confirmLoading: false });

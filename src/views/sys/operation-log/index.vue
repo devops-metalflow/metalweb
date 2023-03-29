@@ -80,7 +80,7 @@
 
       function checkResp(record) {
         Modal.info({
-          title: '请求参数',
+          title: '响应结果',
           content: h(JsonPreview, { data: record.data }),
         });
       }
