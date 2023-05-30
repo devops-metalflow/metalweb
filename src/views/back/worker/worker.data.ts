@@ -107,23 +107,6 @@ export const formSchema: FormSchema[] = [
     component: 'InputTextArea',
   },
   {
-    field: 'startCmd',
-    label: '启动命令',
-    required: true,
-    component: 'InputTextArea',
-  },
-  {
-    field: 'stopCmd',
-    label: '停止命令',
-    required: true,
-    component: 'InputTextArea',
-  },
-  {
-    field: 'deleteCmd',
-    label: '删除命令',
-    component: 'InputTextArea',
-  },
-  {
     field: 'serviceReq',
     label: '接收请求',
     component: 'Input',
