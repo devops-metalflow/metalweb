@@ -136,7 +136,6 @@
         </div>
       </template>
     </BasicTable>
-    <ConfirmModal @register="registerConfirmModal" @success="handleConnect" />
     <UploaderModal @register="registerUploaderModal" />
 
     <!-- Terminal终端模态框 -->
@@ -375,10 +374,10 @@
         Modal.confirm({
           title: '还差一步',
           icon: createVNode(ExclamationCircleOutlined),
-          content: h('div', {}, [h('p', pContent), h('p', '请前往部署指南站点进行部署。')]),
+          content: h('div', {}, [h('p', pContent), h('p', '请前往部署指南站点进行部署')]),
           okText: '立即前往',
           onOk() {
-            window.open(DOC_URL, '_blank');
+            window.open(`${DOC_URL}/config/`, '_blank');
           },
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onCancel() {},
@@ -419,15 +418,6 @@
         openUploaderModal(true, {
           record,
         });
-      }
-
-      function handleConnect({ values }) {
-        visible.value = true;
-        ifTerminal.value = true;
-        sshPort.value = values.sshPort;
-        username.value = values.username;
-        address.value = values.address;
-        password.value = values.password;
       }
 
       async function handleRefresh(record: Recordable) {
@@ -567,7 +557,6 @@
         closeTerminalModal,
         handleTerminal,
         handleRefresh,
-        handleConnect,
         handleDelete,
         handleAddSuccess,
         handleCollect,

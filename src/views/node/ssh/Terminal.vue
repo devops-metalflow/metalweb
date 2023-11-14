@@ -18,25 +18,25 @@
     rows: 20,
     cols: 80,
     theme: {
-      foreground: '#ebeef5',
-      background: '#1d2935',
-      cursor: '#e6a23c',
-      black: '#000000',
-      brightBlack: '#555555',
-      red: '#ef4f4f',
-      brightRed: '#ef4f4f',
-      green: '#67c23a',
-      brightGreen: '#67c23a',
-      yellow: '#e6a23c',
-      brightYellow: '#e6a23c',
-      blue: '#34657b',
-      brightBlue: '#409eff',
-      magenta: '#ef4f4f',
-      brightMagenta: '#ef4f4f',
-      cyan: '#17c0ae',
-      brightCyan: '#17c0ae',
-      white: '#a6e22b',
-      brightWhite: '#ffffff',
+      foreground: '#F8F8F8',
+      background: '#2D2E2C',
+      selection: '#5DA5D533',
+      black: '#1E1E1D',
+      brightBlack: '#262625',
+      red: '#CE5C5C',
+      brightRed: '#FF7272',
+      green: '#5BCC5B',
+      brightGreen: '#72FF72',
+      yellow: '#CCCC5B',
+      brightYellow: '#FFFF72',
+      blue: '#5D5DD3',
+      brightBlue: '#7279FF',
+      magenta: '#BC5ED1',
+      brightMagenta: '#E572FF',
+      cyan: '#5DA5D5',
+      brightCyan: '#72F0FF',
+      white: '#F8F8F8',
+      brightWhite: '#FFFFFF',
     },
   };
 
@@ -61,7 +61,6 @@
 
       function connectWS(rows: number, cols: number) {
         let apiUrl = useGlobSetting().apiUrl;
-        console.log('apiUrl: ', apiUrl);
         let wsUrl =
           apiUrl.search('https') == -1
             ? apiUrl.replace('http', 'ws')
@@ -96,10 +95,13 @@
           convertEol: true, // 启用时，光标将设置为下一行的开头
           // scrollback: 800, // 终端中的回滚量
           disableStdin: false, // 是否应禁用输入
-          fontSize: 16,
-          fontFamily: 'monospace',
+          fontFamily: '"Cascadia Code", Menlo, monospace',
           cursorBlink: true, // 光标闪烁
-          cursorStyle: 'underline', // 光标样式 underline
+          fontSize: 14,
+          lineHeight: 1.1,
+          // cursorStyle: 'underline', // 光标样式 underline
+          allowProposedApi: true,
+          // rightClickSelectsWord: true,
           theme: defaultConfig.theme,
         });
         const fitAddon = new FitAddon();
@@ -113,6 +115,22 @@
         connectTabElement.style.height = Math.floor(window.innerHeight - 5) + 'px';
         term.focus();
 
+        term.writeln(
+          [
+            '',
+            '',
+            ' ┌──────────────────── \ud83d\udc96  \x1b[34m欢迎使用磐石远程终端\x1b[0m \ud83d\udc96  ─────────────────────┐',
+            ' │                                                                     │',
+            ' │                                                                     │',
+            ` │               \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f  \x1b[35;1m终端 \x1b[32m\x1b[3m${props.address}\x1b[0m \x1b[35;1m连接成功\x1b[0m \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f                │`,
+            ' │                                                                     │',
+            ' │                                                                     │',
+            ' │            \u231b \x1b[33;1m提示: \x1b[0m 超过 \x1b[31;1m2\x1b[0m 小时未活动，系统将自动断开               │',
+            ' └─────────────────────────────────────────────────────────────────────┘',
+            '',
+          ].join('\n\r')
+        );
+
         terminal.value = term;
         fit.value = fitAddon;
         fitAddon.fit();
@@ -122,6 +140,17 @@
         term.loadAddon(attachAddon);
         term.loadAddon(new WebLinksAddon());
         term.loadAddon(new SearchAddon());
+
+        // Assuming `term` is your Terminal object
+        term.onSelectionChange(() => {
+          if (term.hasSelection()) {
+            // Get the selected text
+            const selectedText = term.getSelection();
+
+            // Paste the selected text at the cursor
+            term.paste(selectedText);
+          }
+        });
       }
 
       function resizeTerminal() {

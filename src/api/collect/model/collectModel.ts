@@ -1,7 +1,11 @@
-import { NodeListItem } from '/@/api/node/model/nodeModel';
+import { CollectionNodeItem } from '/@/api/node/model/nodeModel';
 
 export interface CollectNodeIdModal {
   nodeId: number;
 }
 
-export type MyCollections = NodeListItem[];
+export interface CollectUpdate {
+  description: string;
+}
+
+export type MyCollections = CollectionNodeItem[];

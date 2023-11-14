@@ -1,10 +1,15 @@
 import { defHttp } from '/@/utils/http/axios';
-import { CollectNodeIdModal, MyCollections } from '/@/api/collect/model/collectModel';
+import {
+  CollectNodeIdModal,
+  CollectUpdate,
+  MyCollections,
+} from '/@/api/collect/model/collectModel';
 
 enum Api {
   GetMyCollections = '/collect/my',
   AddCollect = '/collect/my',
   RemoveCollect = '/collect/delete/my',
+  UpdateCollect = '/collect/update/',
 }
 
 export const addCollect = (params: CollectNodeIdModal) =>
@@ -21,5 +26,11 @@ export const getMyCollect = () =>
 export const removeCollect = (params: CollectNodeIdModal) =>
   defHttp.delete({
     url: Api.RemoveCollect,
+    params,
+  });
+
+export const updateCollect = (id: number, params: CollectUpdate) =>
+  defHttp.patch({
+    url: `${Api.UpdateCollect}${id}`,
     params,
   });

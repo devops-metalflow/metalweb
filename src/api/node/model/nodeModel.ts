@@ -28,6 +28,25 @@ export interface NodeListItem {
   information?: any;
 }
 
+export interface CollectionNodeItem {
+  collectionId: number;
+  description: string;
+  id: number;
+  address: string;
+  manager: string;
+  metrics: string;
+  sshPort: number;
+  asset: string;
+  health: number;
+  performance: number;
+  region: string;
+  remark: string;
+  labels: LabelListItem[];
+  creator?: string;
+  createdAt?: string;
+  information?: any;
+}
+
 export interface NodeCreateRequestModel {
   address?: string;
   manager?: string;

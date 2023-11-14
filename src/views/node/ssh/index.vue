@@ -1,10 +1,13 @@
 <template>
-  <div style="background-color: #ffffff">
+  <div>
     <div>
-      <BasicForm @register="register" />
-    </div>
-    <div>
-      <Tabs v-model:activeKey="activeKey" hide-add type="editable-card" @edit="onEdit">
+      <Tabs
+        v-model:activeKey="activeKey"
+        type="editable-card"
+        @edit="onEdit"
+        tabPosition="bottom"
+        size="small"
+      >
         <TabPane v-for="pane in panes" :key="pane.connectId" :closable="pane.closable">
           <template v-if="pane.type === 'ssh'" #tab>
             <Icon
@@ -46,8 +49,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form';
+  import { defineComponent, onMounted, ref } from 'vue';
   import { Icon } from '/@/components/Icon';
   import { Tabs, Popover, Input } from 'ant-design-vue';
   import TabPane from 'ant-design-vue/lib/vc-tabs/src/TabPane';
@@ -56,13 +58,11 @@
   import VncViewer from '/@/views/node/ssh/VncViewer.vue';
   import FileManagerModal from './FileManagerModal.vue';
   import { useModal } from '/@/components/Modal';
-  import { getNodeList } from '/@/api/node/node';
   import { useRoute } from 'vue-router';
 
   export default defineComponent({
     name: 'Ssh',
     components: {
-      BasicForm,
       ConnectModal,
       FileManagerModal,
       Terminal,
@@ -88,46 +88,16 @@
       >([]);
       const activeKey = ref('');
 
-      const router = useRoute();
-      const { address } = router.query;
-
-      const sshSchema: FormSchema[] = [
-        {
-          label: '终端',
-          field: 'address',
-          component: 'ApiSelect',
-          colProps: { span: 8 },
-          componentProps: {
-            api: () => {
-              return getNodeList({ noPagination: true });
-            },
-            resultField: 'list',
-            labelField: 'address',
-            valueField: 'address',
-            showSearch: true,
-          },
-          required: true,
-          defaultValue: address,
-        },
-      ];
-
-      const [register, { validate }] = useForm({
-        labelWidth: 50,
-        schemas: sshSchema,
-        actionColOptions: {
-          span: 2,
-        },
-        showResetButton: false,
-        submitButtonOptions: {
-          text: '连接',
-        },
-        submitFunc: handleConnect,
-      });
-      async function handleConnect() {
+      function handleConnect() {
         try {
-          const value = await validate();
+          const router = useRoute();
+          let addr = '';
+          const { address } = router.query;
+          if (address) {
+            addr = address;
+          }
           openConnectModal(true, {
-            value,
+            address: addr,
           });
         } catch (error) {}
       }
@@ -201,8 +171,16 @@
         remove(vncId);
       }
 
-      const onEdit = (targetKey: string) => {
-        remove(targetKey);
+      const add = () => {
+        openConnectModal();
+      };
+
+      const onEdit = (targetKey: string, action: string) => {
+        if (action == 'add') {
+          add();
+        } else {
+          remove(targetKey);
+        }
       };
 
       const [registerFileManagerModal, { openModal: openFileManagerModal }] = useModal();
@@ -214,8 +192,11 @@
         });
       }
 
+      onMounted(() => {
+        handleConnect();
+      });
+
       return {
-        register,
         panes,
         onEdit,
         activeKey,
@@ -224,8 +205,14 @@
         openFileManager,
         handleTerminal,
         handleVncFail,
+        openConnectModal,
         registerConnectModal,
       };
     },
   });
 </script>
+<style>
+  .ant-tabs-extra-content {
+    float: left;
+  }
+</style>

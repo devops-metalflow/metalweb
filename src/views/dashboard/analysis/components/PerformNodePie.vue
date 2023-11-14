@@ -77,9 +77,6 @@
                     fontWeight: 'bold',
                   },
                 },
-                labelLine: {
-                  show: false,
-                },
                 data: data,
                 animationType: 'scale',
                 animationEasing: 'exponentialInOut',

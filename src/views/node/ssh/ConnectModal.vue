@@ -15,9 +15,8 @@
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
-  import { BasicForm, useForm } from '/@/components/Form/index';
-  import { connectSchema } from './ssh.data';
-  import { nodeShellConnect } from '/@/api/node/node';
+  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
+  import { getNodeList, nodeShellConnect } from '/@/api/node/node';
   import { notification } from 'ant-design-vue';
 
   export default defineComponent({
@@ -26,6 +25,73 @@
     emits: ['success', 'register'],
     setup: function (_, { emit }) {
       const getTitle = ref<string>('');
+
+      const connectSchema: FormSchema[] = [
+        {
+          label: '终端',
+          field: 'address',
+          component: 'ApiSelect',
+          // colProps: { span: 8 },
+          componentProps: {
+            api: () => {
+              return getNodeList({ noPagination: true });
+            },
+            resultField: 'list',
+            labelField: 'address',
+            valueField: 'address',
+            showSearch: true,
+          },
+          required: true,
+        },
+        {
+          field: 'connectType',
+          label: '连接类型',
+          required: true,
+          component: 'RadioButtonGroup',
+          defaultValue: 'ssh',
+          componentProps: {
+            options: [
+              { label: 'ssh', value: 'ssh' },
+              { label: 'vnc', value: 'vnc' },
+            ],
+          },
+        },
+        {
+          field: 'sshPort',
+          label: '端口',
+          required: true,
+          component: 'InputNumber',
+          defaultValue: 22,
+          ifShow: ({ values }) => {
+            return values.connectType == 'ssh';
+          },
+        },
+        {
+          field: 'vncPort',
+          label: '端口',
+          required: true,
+          component: 'InputNumber',
+          defaultValue: 5901,
+          ifShow: ({ values }) => {
+            return values.connectType == 'vnc';
+          },
+        },
+        {
+          field: 'username',
+          label: '账户',
+          required: true,
+          component: 'Input',
+          ifShow: ({ values }) => {
+            return values.connectType == 'ssh';
+          },
+        },
+        {
+          field: 'password',
+          label: '密码',
+          required: true,
+          component: 'InputPassword',
+        },
+      ];
 
       const [registerForm, { setFieldsValue, resetFields, validate }] = useForm({
         labelWidth: 100,
@@ -44,9 +110,9 @@
 
       const [registerModal, { closeModal }] = useModalInner(async (data) => {
         await resetFields();
-        getTitle.value = `远程连接${data.value.address}`;
+        getTitle.value = '远程连接';
         await setFieldsValue({
-          ...data.value,
+          ...data,
         });
       });
 

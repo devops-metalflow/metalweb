@@ -1,8 +1,8 @@
 <template>
   <div v-if="nodes.length > 0" style="background-color: #ececec; padding: 20px">
-    <Row :gutter="[24, 24]">
+    <Row :gutter="[16, 32]">
       <Col class="gutter-row" :span="6" v-for="(node, i) in nodes" :key="i">
-        <Card bordered hoverable>
+        <Card bordered hoverable style="width: 300px">
           <template #actions>
             <Tooltip placement="bottom">
               <template #title>
@@ -12,12 +12,22 @@
             </Tooltip>
             <Tooltip placement="bottom">
               <template #title>
+                <span>添加描述</span>
+              </template>
+              <Icon
+                icon="edit|svg"
+                size="20"
+                @click="handleEdit(node.collectionId, node.address, node.description)"
+              />
+            </Tooltip>
+            <Tooltip placement="bottom">
+              <template #title>
                 <span>ssh连接</span>
               </template>
               <Icon icon="terminal-server|svg" size="20" @click="handleTerminal(node.address)" />
             </Tooltip>
           </template>
-          <CardMeta :title="node.address" :description="node.health">
+          <CardMeta :title="node.address" :description="node.description">
             <template #avatar>
               <Popover placement="bottomRight">
                 <template #content>
@@ -45,13 +55,14 @@
                     >
                   </div>
                 </template>
-                <Icon :icon="node.performIcon" :size="35" />
+                <Icon :icon="node.performIcon" :size="60" />
               </Popover>
             </template>
           </CardMeta>
         </Card>
       </Col>
     </Row>
+    <EditModal @register="registerEditModal" @success="handleEditSuccess" />
   </div>
   <Empty v-else :image-style="{ height: '300px' }" description="你暂无收藏~" />
 </template>
@@ -63,15 +74,19 @@
   import { Icon } from '/@/components/Icon';
   import { getMyCollect, removeCollect } from '/@/api/collect/collect';
   import { useRouter } from 'vue-router';
+  import { useModal } from '/@/components/Modal';
+  import EditModal from '/@/views/node/my/components/EditModal.vue';
 
   export default defineComponent({
     name: 'MyNode',
-    components: { Card, Col, Row, Icon, CardMeta, Empty, Tooltip, Popover },
+    components: { EditModal, Card, Col, Row, Icon, CardMeta, Empty, Tooltip, Popover },
     setup() {
       const router = useRouter();
       const nodes = ref<
         {
           id: number;
+          collectionId: number;
+          description: string;
           address: string;
           manager?: string;
           metrics: {
@@ -90,7 +105,22 @@
         }[]
       >([]);
 
+      const [registerEditModal, { openModal: openEditModal }] = useModal();
+
+      function handleEdit(collectionId: number, address: string, description: string) {
+        openEditModal(true, {
+          collectionId,
+          address,
+          description,
+        });
+      }
+
+      function handleEditSuccess() {
+        getMyCollections();
+      }
+
       function getMyCollections() {
+        nodes.value = [];
         getMyCollect()
           .then((nodeInfos) => {
             nodeInfos.forEach((info) => {
@@ -142,21 +172,19 @@
                 });
               }
 
-              const performIcons = [
-                'card-high-server|svg',
-                'card-mid-server|svg',
-                'card-low-server|svg',
-              ];
+              const performIcon = 'server-vscode|svg';
               const healths = ['运行中', '异常', '已停机'];
               nodes.value.push({
                 id: info.id,
+                collectionId: info.collectionId,
+                description: info.description,
                 address: info.address,
                 manager: info.manager,
                 metrics: metricInfos,
                 asset: info.asset,
                 health: healths[info.health],
                 performance: info.performance,
-                performIcon: performIcons[info.performance],
+                performIcon: performIcon,
                 region: info.region,
               });
             });
@@ -183,7 +211,14 @@
         getMyCollections();
       });
 
-      return { nodes, removeMyCollect, handleTerminal };
+      return {
+        nodes,
+        removeMyCollect,
+        handleTerminal,
+        registerEditModal,
+        handleEdit,
+        handleEditSuccess,
+      };
     },
   });
 </script>
