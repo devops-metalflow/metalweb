@@ -13,6 +13,7 @@
   import { getToken } from '/@/utils/auth';
   import { useGlobSetting } from '/@/hooks/setting';
   import { resizeShell } from '/@/api/node/node';
+  import useClipboard from 'vue-clipboard3';
 
   const defaultConfig: any = {
     rows: 20,
@@ -58,6 +59,7 @@
       const wsConnect = ref();
       const terminal = ref();
       const fit = ref();
+      const { toClipboard } = useClipboard();
 
       function connectWS(rows: number, cols: number) {
         let apiUrl = useGlobSetting().apiUrl;
@@ -141,14 +143,13 @@
         term.loadAddon(new WebLinksAddon());
         term.loadAddon(new SearchAddon());
 
-        // Assuming `term` is your Terminal object
         term.onSelectionChange(() => {
           if (term.hasSelection()) {
             // Get the selected text
             const selectedText = term.getSelection();
-
-            // Paste the selected text at the cursor
-            term.paste(selectedText);
+            if (selectedText) {
+              toClipboard(selectedText);
+            }
           }
         });
       }
