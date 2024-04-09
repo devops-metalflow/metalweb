@@ -23,6 +23,7 @@ enum Api {
   GetNodeFileContent = '/node/shell/file',
   DownloadFile = '/node/shell/file/download',
   UpdateFile = '/node/shell/file/update',
+  UploadFile = '/node/shell/file/upload',
   ResizeShell = '/node/shell/ws/resize',
 }
 
@@ -61,6 +62,7 @@ export const downloadFile = (params: FilepathModel) =>
     {
       url: Api.DownloadFile,
       params,
+      responseType: 'blob',
     },
     { isTransformResponse: false }
   );
@@ -69,6 +71,15 @@ export const updateFile = (params: UpdateNodeShellModel) =>
   defHttp.patch({
     url: Api.UpdateFile,
     params,
+  });
+
+export const uploadFile = (params: any) =>
+  defHttp.post({
+    url: Api.UploadFile,
+    params,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
 export const createNode = (params: NodeCreateRequestModel) =>

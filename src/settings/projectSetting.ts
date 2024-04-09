@@ -27,7 +27,7 @@ const setting: ProjectConfig = {
   showDarkModeToggle: true,
 
   // `Settings` button position
-  settingButtonPosition: SettingButtonPositionEnum.AUTO,
+  settingButtonPosition: SettingButtonPositionEnum.HEADER,
 
   // Permission mode
   permissionMode: PermissionModeEnum.BACK,

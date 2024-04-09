@@ -1,103 +1,81 @@
 <template>
   <div>
-    <div>
-      <Tabs
-        v-model:activeKey="activeKey"
-        type="editable-card"
-        @edit="onEdit"
-        tabPosition="bottom"
-        size="small"
-      >
-        <TabPane v-for="pane in panes" :key="pane.connectId" :closable="pane.closable">
-          <template v-if="pane.type === 'ssh'" #tab>
-            <Icon
-              icon="files-svg|svg"
-              :size="20"
-              @click="openFileManager(pane.connectId, pane.user, pane.address)"
-            />
-            <Popover placement="bottomRight">
-              <template #content>
-                <div style="width: 200px">
-                  <Input addon-before="session" :value="pane.connectId" size="small" disabled />
-                  <Input addon-before="端口" :value="pane.port" size="small" disabled />
-                  <Input addon-before="用户" :value="pane.user" size="small" disabled />
-                </div>
-              </template>
-              <span>
-                {{ pane.address }}
-              </span>
-            </Popover>
-          </template>
-          <template v-else #tab>
-            <span>
-              {{ pane.address }}
-            </span>
-          </template>
-          <Terminal v-if="pane.type === 'ssh'" :address="pane.address" :sshId="pane.connectId" />
-          <VncViewer
-            v-else
-            :address="pane.address"
-            :vncId="pane.connectId"
-            :port="pane.port"
-            :password="pane.password"
-            @fail="handleVncFail"
-          /> </TabPane
-      ></Tabs>
-    </div>
     <ConnectModal @register="registerConnectModal" @success="handleTerminal" />
-    <FileManagerModal @register="registerFileManagerModal" />
+  </div>
+  <div class="container">
+    <div v-if="pane.type === 'ssh'">
+      <div class="toolbar">
+        <ul class="styled-list">
+          <li
+            ><a
+              ><Icon
+                icon="folder|svg"
+                size="20"
+                @click="openFileManager(pane.connectId, pane.user, pane.address)" /></a
+          ></li>
+        </ul>
+      </div>
+      <div class="terminal">
+        <Terminal :address="pane.address" :sshId="pane.connectId" />
+      </div>
+      <FileMangerDrawer @register="registerDrawer" />
+    </div>
+    <div v-else-if="pane.type === 'vnc'">
+      <VncViewer
+        :address="pane.address"
+        :vncId="pane.connectId"
+        :port="pane.port"
+        :password="pane.password"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
-  import { Icon } from '/@/components/Icon';
-  import { Tabs, Popover, Input } from 'ant-design-vue';
-  import TabPane from 'ant-design-vue/lib/vc-tabs/src/TabPane';
+  import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
   import ConnectModal from './ConnectModal.vue';
   import Terminal from './Terminal.vue';
+  import FileMangerDrawer from './FileDrawer.vue';
   import VncViewer from '/@/views/node/ssh/VncViewer.vue';
-  import FileManagerModal from './FileManagerModal.vue';
   import { useModal } from '/@/components/Modal';
-  import { useRoute } from 'vue-router';
+  import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
+  import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
+  import { useMultipleTabSetting } from '/@/hooks/setting/useMultipleTabSetting';
+  import { triggerWindowResize } from '/@/utils/event';
+  import { TriggerEnum } from '/@/enums/menuEnum';
+  import { Icon } from '/@/components/Icon';
+  import { useDrawer } from '/@/components/Drawer';
 
   export default defineComponent({
     name: 'Ssh',
     components: {
+      Icon,
       ConnectModal,
-      FileManagerModal,
+      FileMangerDrawer,
       Terminal,
       VncViewer,
-      Tabs,
-      TabPane,
-      Icon,
-      Popover,
-      Input,
     },
     setup() {
+      const { setMenuSetting } = useMenuSetting();
+      const { setHeaderSetting } = useHeaderSetting();
+      const { setMultipleTabSetting } = useMultipleTabSetting();
       const [registerConnectModal, { openModal: openConnectModal }] = useModal();
-      const panes = ref<
-        {
-          type: string;
-          address: string;
-          connectId: string;
-          port: number;
-          user?: string;
-          password?: string;
-          closable?: boolean;
-        }[]
-      >([]);
+      const pane = ref<{
+        type: string;
+        address: string;
+        connectId: string;
+        port: number;
+        user?: string;
+        password?: string;
+        closable?: boolean;
+      }>({ address: '', connectId: '', port: 0, type: '' });
       const activeKey = ref('');
 
       function handleConnect() {
         try {
-          const router = useRoute();
-          let addr = '';
-          const { address } = router.query;
-          if (address) {
-            addr = address;
-          }
+          const address = sessionStorage.getItem('address');
+          console.log('address: ', address);
           openConnectModal(true, {
-            address: addr,
+            address: address,
           });
         } catch (error) {}
       }
@@ -105,28 +83,26 @@
       function handleTerminal({ values, sshId }) {
         // 判断连接类型
         if (values.connectType == 'ssh') {
-          // 若连接成功，则发出websocket连接，并显示terminal
-          activeKey.value = sshId;
-          panes.value.push({
+          pane.value = {
             type: values.connectType,
             address: values.address,
             port: values.sshPort,
             user: values.username,
             connectId: sshId,
             closable: true,
-          });
+          };
         } else {
           // 进行vnc连接
           let uuid = generateUUID();
           activeKey.value = uuid;
-          panes.value.push({
+          pane.value = {
             type: values.connectType,
             address: values.address,
             port: values.vncPort,
             connectId: uuid,
             password: values.password,
             closable: true,
-          });
+          };
         }
       }
 
@@ -150,42 +126,9 @@
         });
       }
 
-      const remove = (targetKey: string) => {
-        let lastIndex = 0;
-        panes.value.forEach((pane, i) => {
-          if (pane.connectId === targetKey) {
-            lastIndex = i - 1;
-          }
-        });
-        panes.value = panes.value.filter((pane) => pane.connectId !== targetKey);
-        if (panes.value.length && activeKey.value === targetKey) {
-          if (lastIndex >= 0) {
-            activeKey.value = panes.value[lastIndex].connectId;
-          } else {
-            activeKey.value = panes.value[0].connectId;
-          }
-        }
-      };
-
-      function handleVncFail({ vncId }) {
-        remove(vncId);
-      }
-
-      const add = () => {
-        openConnectModal();
-      };
-
-      const onEdit = (targetKey: string, action: string) => {
-        if (action == 'add') {
-          add();
-        } else {
-          remove(targetKey);
-        }
-      };
-
-      const [registerFileManagerModal, { openModal: openFileManagerModal }] = useModal();
+      const [registerDrawer, { openDrawer }] = useDrawer();
       function openFileManager(sshId: string, user: string, address: string) {
-        openFileManagerModal(true, {
+        openDrawer(true, {
           sshId,
           user,
           address,
@@ -194,25 +137,69 @@
 
       onMounted(() => {
         handleConnect();
+        setMenuSetting({
+          show: false,
+          trigger: TriggerEnum.NONE,
+        });
+        setHeaderSetting({ show: false });
+        setMultipleTabSetting({ show: false });
+        triggerWindowResize();
+      });
+      onUnmounted(() => {
+        setMenuSetting({
+          show: true,
+          trigger: TriggerEnum.NONE,
+        });
+        setHeaderSetting({ show: true });
+        setMultipleTabSetting({ show: true });
       });
 
       return {
-        panes,
-        onEdit,
-        activeKey,
-        registerFileManagerModal,
-        openFileManagerModal,
+        pane,
+        registerDrawer,
         openFileManager,
         handleTerminal,
-        handleVncFail,
         openConnectModal,
         registerConnectModal,
       };
     },
   });
 </script>
+
 <style>
-  .ant-tabs-extra-content {
-    float: left;
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 确保容器占满视口高度 */
+    max-width: none;
+  }
+
+  .toolbar {
+    position: fixed;
+    top: 0;
+    background-color: #f1f2f5;
+    width: 100%; /* 或者您想要的宽度 */
+    z-index: 1000; /* 确保按钮排在其他内容之上 */
+  }
+  .terminal {
+    flex: 1; /* 让终端部分占据剩余空间 */
+    overflow: auto; /* 允许滚动 */
+    padding-top: 5px;
+  }
+  /* 为具有 'styled-list' 类的 <ul> 增加间隔 */
+  .styled-list {
+    list-style-type: none; /* 移除默认的列表标记 */
+    padding-left: 10px; /* 移除默认的左内边距 */
+    margin-bottom: 0;
+  }
+
+  .styled-list li {
+    padding: 5px 0; /* 增加列表项的上下内边距 */
+    border-bottom: 1px solid #ccc; /* 为每个列表项添加底部边框 */
+  }
+
+  /* 最后一个列表项不需要底部边框 */
+  .styled-list li:last-child {
+    border-bottom: none; /* 移除最后一个列表项的底部边框 */
   }
 </style>

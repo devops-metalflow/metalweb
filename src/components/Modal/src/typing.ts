@@ -46,7 +46,7 @@ export interface ModalProps {
 
   // 是否使用modalWrapper
   useWrapper: boolean;
-
+  keyboard: boolean;
   loading: boolean;
   loadingTip?: string;
 

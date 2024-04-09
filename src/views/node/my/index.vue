@@ -200,11 +200,21 @@
           .catch(() => {});
       }
 
+      const openInNewWindowWithParams = (routeName: string, address: string) => {
+        const routeData = router.resolve({ path: routeName });
+        sessionStorage.setItem('address', address);
+        window.open(`${routeData.href}`, '_blank');
+      };
+
       function handleTerminal(address: string) {
-        router.push({
-          path: '/node/ssh',
-          query: { address: address },
-        });
+        // router.push({
+        //   path: '/node/ssh',
+        //   query: { address: address },
+        // });
+        openInNewWindowWithParams('/node/ssh', address);
+        // const windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
+        // window.open('/node/ssh?address=' + address, '_blank', windowFeatures);
+        // console.log('address: ', address);
       }
 
       onMounted(() => {

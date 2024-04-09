@@ -394,11 +394,14 @@
         });
       }
 
+      const openInNewWindowWithParams = (routeName: string, address: string) => {
+        const routeData = router.resolve({ path: routeName });
+        sessionStorage.setItem('address', address);
+        window.open(`${routeData.href}`, '_blank');
+      };
+
       function handleTerminal(record: Recordable) {
-        router.push({
-          path: '/node/ssh',
-          query: { address: record.address },
-        });
+        openInNewWindowWithParams('/node/ssh', record.address);
       }
 
       function handleCollect(record: Recordable) {

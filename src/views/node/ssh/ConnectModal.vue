@@ -8,12 +8,16 @@
     :showCancelBtn="false"
     @ok="handleConnect"
   >
-    <BasicForm @register="registerForm" />
+    <BasicForm @register="registerForm">
+      <template #customSlot="{ model, field }">
+        <a-input v-model:value="model[field]" ref="connect" />
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, nextTick, ref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
   import { getNodeList, nodeShellConnect } from '/@/api/node/node';
@@ -25,6 +29,7 @@
     emits: ['success', 'register'],
     setup: function (_, { emit }) {
       const getTitle = ref<string>('');
+      const connect = ref();
 
       const connectSchema: FormSchema[] = [
         {
@@ -80,6 +85,7 @@
           field: 'username',
           label: '账户',
           required: true,
+          slot: 'customSlot',
           component: 'Input',
           ifShow: ({ values }) => {
             return values.connectType == 'ssh';
@@ -108,11 +114,19 @@
         autoSubmitOnEnter: true,
       });
 
-      const [registerModal, { closeModal }] = useModalInner(async (data) => {
+      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
         await resetFields();
-        getTitle.value = '远程连接';
+        getTitle.value = `远程连接`;
+        setModalProps({
+          maskClosable: false,
+          closable: false,
+          keyboard: false,
+        });
         await setFieldsValue({
           ...data,
+        });
+        await nextTick(() => {
+          connect.value.focus();
         });
       });
 
@@ -131,6 +145,7 @@
             .then((v) => {
               // 将得到的sshId传递回去
               emit('success', { values: { ...values }, sshId: v });
+              closeModal();
             })
             .catch((e) => {
               notification.error({
@@ -139,14 +154,13 @@
                 duration: 5,
               });
             });
-          closeModal();
         } else {
           // 进行vnc连接测试
           emit('success', { values: { ...values } });
           closeModal();
         }
       }
-      return { registerModal, registerForm, getTitle, handleConnect, closeModal };
+      return { registerModal, registerForm, getTitle, handleConnect, closeModal, connect };
     },
   });
 </script>
