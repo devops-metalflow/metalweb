@@ -26,6 +26,8 @@ export interface OriginRouteItem {
   affix?: number | string;
   icon?: string;
   title: string;
+  onlyContent?: number | string;
+  newTab?: number | string;
   visible: number | string;
   children?: OriginRouteItem[];
 }

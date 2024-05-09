@@ -19,6 +19,7 @@
   import { useRootSetting } from '/@/hooks/setting/useRootSetting';
   import { useAppInject } from '/@/hooks/web/useAppInject';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     name: 'LayoutMenu',
@@ -39,6 +40,9 @@
     },
     setup(props) {
       const go = useGo();
+
+      const router = useRouter();
+      const routes = router.getRoutes();
 
       const {
         getMenuMode,
@@ -111,7 +115,13 @@
        */
 
       function handleMenuClick(path: string) {
-        go(path);
+        // 查找具有相同路径的路由对象
+        const routeObject = routes.find((r) => r.path === path);
+        if (routeObject?.meta.newTab) {
+          openWindow(`/#${path}`, { target: '_blank' });
+        } else {
+          go(path);
+        }
       }
 
       /**

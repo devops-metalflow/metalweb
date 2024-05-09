@@ -11,13 +11,7 @@
     @ok="handleUpdate"
     @register="registerModal"
   >
-    <FileEditor
-      v-if="fileContent"
-      ref="monaco"
-      :val="fileContent"
-      :file-type="fileType"
-      :height="1000"
-    />
+    <FileEditor ref="monaco" :val="fileContent" :file-type="fileType" :height="1000" />
   </BasicModal>
 </template>
 

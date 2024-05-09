@@ -73,6 +73,8 @@ export function transOriginToRoute<T = RouteItem>(routeList: OriginRouteItem[]):
       icon: route.icon,
       hideMenu: route.visible == 0,
       title: route.title,
+      onlyContent: route.onlyContent == 1,
+      newTab: route.newTab == 1,
     };
     const tmp: RouteItem = {
       path: route.path,

@@ -1,11 +1,11 @@
 <template>
   <Layout :class="prefixCls" v-bind="lockEvents">
     <LayoutFeatures />
-    <LayoutHeader fixed v-if="getShowFullHeaderRef" />
+    <LayoutHeader fixed v-if="getShowFullHeaderRef && !route.meta.onlyContent" />
     <Layout :class="[layoutClass]">
-      <LayoutSideBar v-if="getShowSidebar || getIsMobile" />
+      <LayoutSideBar v-if="(getShowSidebar || getIsMobile) && !route.meta.onlyContent" />
       <Layout :class="`${prefixCls}-main`">
-        <LayoutMultipleHeader />
+        <LayoutMultipleHeader v-if="!route.meta.onlyContent" />
         <LayoutContent />
         <LayoutFooter />
       </Layout>
@@ -27,6 +27,7 @@
   import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useLockPage } from '/@/hooks/web/useLockPage';
+  import { useRoute } from 'vue-router';
 
   import { useAppInject } from '/@/hooks/web/useAppInject';
 
@@ -46,6 +47,7 @@
       const { getIsMobile } = useAppInject();
       const { getShowFullHeaderRef } = useHeaderSetting();
       const { getShowSidebar, getIsMixSidebar, getShowMenu } = useMenuSetting();
+      const route = useRoute(); // Controls whether only content is displayed
 
       // Create a lock screen monitor
       const lockEvents = useLockPage();
@@ -66,6 +68,7 @@
         getIsMixSidebar,
         layoutClass,
         lockEvents,
+        route,
       };
     },
   });

@@ -1,5 +1,11 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="40vw">
+  <BasicDrawer
+    v-bind="$attrs"
+    @register="registerDrawer"
+    @close="handleClose"
+    :title="getTitle"
+    width="40vw"
+  >
     <div>
       <Spin tip="正在上传..." :spinning="isUpload" />
       <Upload
@@ -28,9 +34,6 @@
                 p.name
               }}</breadcrumb-item>
             </template>
-            <a>
-              <Icon class="edit" size="22" icon="path-edit|svg" @click="doEdit" />
-            </a>
           </Breadcrumb>
         </Tooltip>
       </div>
@@ -101,7 +104,6 @@
   export default defineComponent({
     name: 'FileManagerDrawer',
     components: {
-      Icon,
       BasicTable,
       EditorModal,
       DiffModal,
@@ -113,8 +115,8 @@
       Tooltip,
       Spin,
     },
-    emits: ['success', 'register'],
-    setup() {
+    emits: ['success', 'register', 'close'],
+    setup(_, { emit }) {
       const getTitle = ref<string>('');
       const fileData = ref([]);
       const fileIcons = ref({});
@@ -285,7 +287,7 @@
 
       function doEdit() {
         isEdit.value = true;
-        filepath.value = filePaths.value[filePaths.value.length - 1].dir;
+        filepath.value = filePaths.value[filePaths.value.length - 1].dir + '/';
         nextTick(() => {
           input.value.focus();
         });
@@ -321,6 +323,11 @@
           });
       };
 
+      function handleClose() {
+        console.log('close');
+        emit('close');
+      }
+
       return {
         getInitFiles,
         onContextMenu,
@@ -342,6 +349,7 @@
         handleChange,
         customUpload,
         isUpload,
+        handleClose,
       };
     },
   });
@@ -377,9 +385,5 @@
   /* 鼠标悬停时改变链接样式 */
   .filepath > span a:hover {
     color: #40a9ff; /* 鼠标悬停时的链接颜色 */
-  }
-  .edit {
-    float: right;
-    right: 2px;
   }
 </style>

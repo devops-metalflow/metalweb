@@ -4,21 +4,18 @@
   </div>
   <div class="container">
     <div v-if="pane.type === 'ssh'">
-      <div class="toolbar">
-        <ul class="styled-list">
-          <li
-            ><a
-              ><Icon
-                icon="folder|svg"
-                size="20"
-                @click="openFileManager(pane.connectId, pane.user, pane.address)" /></a
-          ></li>
-        </ul>
-      </div>
+      <Tooltip v-if="isVisible" title="打开文件管理" placement="bottom">
+        <Icon
+          class="sftp-folder"
+          icon="folder|svg"
+          size="30"
+          @click="openFileManager(pane.connectId, pane.user, pane.address)"
+        />
+      </Tooltip>
       <div class="terminal">
         <Terminal :address="pane.address" :sshId="pane.connectId" />
       </div>
-      <FileMangerDrawer @register="registerDrawer" />
+      <FileMangerDrawer @register="registerDrawer" @close="closeDrawer" />
     </div>
     <div v-else-if="pane.type === 'vnc'">
       <VncViewer
@@ -31,23 +28,20 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+  import { defineComponent, onMounted, ref } from 'vue';
   import ConnectModal from './ConnectModal.vue';
   import Terminal from './Terminal.vue';
   import FileMangerDrawer from './FileDrawer.vue';
   import VncViewer from '/@/views/node/ssh/VncViewer.vue';
   import { useModal } from '/@/components/Modal';
-  import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
-  import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
-  import { useMultipleTabSetting } from '/@/hooks/setting/useMultipleTabSetting';
-  import { triggerWindowResize } from '/@/utils/event';
-  import { TriggerEnum } from '/@/enums/menuEnum';
   import { Icon } from '/@/components/Icon';
   import { useDrawer } from '/@/components/Drawer';
+  import { Tooltip } from 'ant-design-vue';
 
   export default defineComponent({
     name: 'Ssh',
     components: {
+      Tooltip,
       Icon,
       ConnectModal,
       FileMangerDrawer,
@@ -55,9 +49,6 @@
       VncViewer,
     },
     setup() {
-      const { setMenuSetting } = useMenuSetting();
-      const { setHeaderSetting } = useHeaderSetting();
-      const { setMultipleTabSetting } = useMultipleTabSetting();
       const [registerConnectModal, { openModal: openConnectModal }] = useModal();
       const pane = ref<{
         type: string;
@@ -69,6 +60,7 @@
         closable?: boolean;
       }>({ address: '', connectId: '', port: 0, type: '' });
       const activeKey = ref('');
+      const isVisible = ref(true);
 
       function handleConnect() {
         try {
@@ -91,6 +83,7 @@
             connectId: sshId,
             closable: true,
           };
+          isVisible.value = true;
         } else {
           // 进行vnc连接
           let uuid = generateUUID();
@@ -128,6 +121,7 @@
 
       const [registerDrawer, { openDrawer }] = useDrawer();
       function openFileManager(sshId: string, user: string, address: string) {
+        isVisible.value = false;
         openDrawer(true, {
           sshId,
           user,
@@ -135,32 +129,23 @@
         });
       }
 
+      function closeDrawer() {
+        isVisible.value = true;
+      }
+
       onMounted(() => {
         handleConnect();
-        setMenuSetting({
-          show: false,
-          trigger: TriggerEnum.NONE,
-        });
-        setHeaderSetting({ show: false });
-        setMultipleTabSetting({ show: false });
-        triggerWindowResize();
-      });
-      onUnmounted(() => {
-        setMenuSetting({
-          show: true,
-          trigger: TriggerEnum.NONE,
-        });
-        setHeaderSetting({ show: true });
-        setMultipleTabSetting({ show: true });
       });
 
       return {
         pane,
+        isVisible,
         registerDrawer,
         openFileManager,
         handleTerminal,
         openConnectModal,
         registerConnectModal,
+        closeDrawer,
       };
     },
   });
@@ -174,32 +159,14 @@
     max-width: none;
   }
 
-  .toolbar {
-    position: fixed;
-    top: 0;
-    background-color: #f1f2f5;
-    width: 100%; /* 或者您想要的宽度 */
-    z-index: 1000; /* 确保按钮排在其他内容之上 */
+  .sftp-folder {
+    position: absolute;
+    right: 10px;
+    z-index: 1000;
+    top: 250px;
+    cursor: pointer;
   }
   .terminal {
-    flex: 1; /* 让终端部分占据剩余空间 */
-    overflow: auto; /* 允许滚动 */
-    padding-top: 5px;
-  }
-  /* 为具有 'styled-list' 类的 <ul> 增加间隔 */
-  .styled-list {
-    list-style-type: none; /* 移除默认的列表标记 */
-    padding-left: 10px; /* 移除默认的左内边距 */
-    margin-bottom: 0;
-  }
-
-  .styled-list li {
-    padding: 5px 0; /* 增加列表项的上下内边距 */
-    border-bottom: 1px solid #ccc; /* 为每个列表项添加底部边框 */
-  }
-
-  /* 最后一个列表项不需要底部边框 */
-  .styled-list li:last-child {
-    border-bottom: none; /* 移除最后一个列表项的底部边框 */
+    height: 100vh;
   }
 </style>

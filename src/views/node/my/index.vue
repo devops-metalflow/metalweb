@@ -1,7 +1,17 @@
 <template>
   <div v-if="nodes.length > 0" style="background-color: #ececec; padding: 20px">
     <Row :gutter="[16, 32]">
-      <Col class="gutter-row" :span="6" v-for="(node, i) in nodes" :key="i">
+      <Col
+        class="gutter-row"
+        :span="6"
+        :xxl="6"
+        :xl="8"
+        :lg="8"
+        :md="8"
+        :sm="12"
+        v-for="(node, i) in nodes"
+        :key="i"
+      >
         <Card bordered hoverable style="width: 300px">
           <template #actions>
             <Tooltip placement="bottom">
