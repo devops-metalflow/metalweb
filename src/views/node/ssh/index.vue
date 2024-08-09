@@ -40,7 +40,6 @@
   import FileMangerDrawer from './FileDrawer.vue';
   import VncViewer from '/@/views/node/ssh/VncViewer.vue';
   import { useModal } from '/@/components/Modal';
-  import { Icon } from '/@/components/Icon';
   import { useDrawer } from '/@/components/Drawer';
   import { Tooltip, Badge } from 'ant-design-vue';
 
@@ -48,7 +47,6 @@
     name: 'Ssh',
     components: {
       Tooltip,
-      Icon,
       Badge,
       ConnectModal,
       FileMangerDrawer,
