@@ -124,7 +124,7 @@
             ' ┌──────────────────── \ud83d\udc96  \x1b[34m欢迎使用磐石远程终端\x1b[0m \ud83d\udc96  ─────────────────────┐',
             ' │                                                                     │',
             ' │                                                                     │',
-            ` │               \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f  \x1b[35;1m终端 \x1b[32m\x1b[3m${props.address}\x1b[0m \x1b[35;1m连接成功\x1b[0m \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f                │`,
+            ` │               \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f  \x1b[35;1m终端 \x1b[32m${props.address} \x1b[35;1m连接成功\x1b[0m \ud83d\udc4f \ud83d\udc4f \ud83d\udc4f               │`,
             ' │                                                                     │',
             ' │                                                                     │',
             ' │            \u231b \x1b[33;1m提示: \x1b[0m 超过 \x1b[31;1m2\x1b[0m 小时未活动，系统将自动断开               │',

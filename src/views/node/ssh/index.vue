@@ -4,13 +4,19 @@
   </div>
   <div class="container">
     <div v-if="pane.type === 'ssh'">
-      <Tooltip v-if="isVisible" title="打开文件管理" placement="bottom">
-        <Icon
-          class="sftp-folder"
-          icon="folder|svg"
-          size="30"
-          @click="openFileManager(pane.connectId, pane.user, pane.address)"
-        />
+      <Tooltip v-if="isVisible" title="点击打开文件管理" placement="bottom">
+        <div class="sftp-folder">
+          <Badge
+            :count="pane.address"
+            :number-style="{
+              fontSize: '16px',
+              backgroundColor: '#d08c12',
+              color: '#ffffff',
+              boxShadow: '0 0 0 1px #d9d9d9 inset',
+            }"
+            @click="openFileManager(pane.connectId, pane.user, pane.address)"
+          />
+        </div>
       </Tooltip>
       <div class="terminal">
         <Terminal :address="pane.address" :sshId="pane.connectId" />
@@ -36,13 +42,14 @@
   import { useModal } from '/@/components/Modal';
   import { Icon } from '/@/components/Icon';
   import { useDrawer } from '/@/components/Drawer';
-  import { Tooltip } from 'ant-design-vue';
+  import { Tooltip, Badge } from 'ant-design-vue';
 
   export default defineComponent({
     name: 'Ssh',
     components: {
       Tooltip,
       Icon,
+      Badge,
       ConnectModal,
       FileMangerDrawer,
       Terminal,

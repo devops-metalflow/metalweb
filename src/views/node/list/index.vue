@@ -283,31 +283,46 @@
 
       const edit = (key: string) => {
         editableData[key] = cloneDeep(getDataSource().filter((item) => key === item.id)[0]);
+        console.log('edit-data: ', editableData[key]);
         editableData[key].labels.forEach((val: any) => {
           valueRef.value.push({ key: val.id, value: val.id, label: val.name });
         });
         // 清理labels数据，以免重复添加
-        editableData[key].labels = [];
+        editableData[key].labels.length = 0;
       };
-      const editSubmit = (key: string) => {
+      const editSubmit = async (key: string) => {
         let labelIds: number[] = [];
-        const editObject = getDataSource().filter((item) => key === item.id)[0];
-        valueRef.value.forEach((val: any) => {
-          editableData[key].labels.push({ id: val.key, name: val.label });
-          labelIds.push(val.key);
-        });
-        // 清理绑定value数据，以免重复添加
-        valueRef.value = [];
-        Object.assign(editObject, editableData[key]);
+        const editObject = getDataSource().find((item) => key === item.id);
 
-        updateNode(key, { labelIds: labelIds })
-          .then((_res) => {
-            console.log('update labels success.');
-          })
-          .catch((_res) => {
-            console.log('update labels fail.');
+        if (editObject) {
+          // 获取当前标签列表，供名称到ID的转换
+          const currentLabels = await getLabelList(); // 假设 getLabelList 返回当前所有标签列表
+
+          valueRef.value.forEach((val: any) => {
+            // 查找相应的 id
+            const foundLabel = currentLabels.list.find((label) => label.name === val.label);
+            if (foundLabel) {
+              editableData[key].labels.push({ id: foundLabel.id, name: foundLabel.name });
+              if (typeof foundLabel.id === 'number') {
+                labelIds.push(foundLabel.id);
+              }
+            }
           });
-        delete editableData[key];
+
+          // 清理绑定value数据，以免重复添加
+          valueRef.value.length = 0; // 清空数组内容但保持引用不变
+          Object.assign(editObject, editableData[key]);
+
+          updateNode(key, { labelIds: labelIds })
+            .then((_res) => {
+              console.log('update labels success.');
+            })
+            .catch((_res) => {
+              console.log('update labels fail.');
+            });
+
+          delete editableData[key];
+        }
       };
       const editCancel = (key: string) => {
         valueRef.value = [];
@@ -323,7 +338,7 @@
           api: getLabelList,
           resultField: 'list',
           labelField: 'name',
-          valueField: 'id',
+          valueField: 'name',
         };
         return {
           placeholder: 'Please Select',
